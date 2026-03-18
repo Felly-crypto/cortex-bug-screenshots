@@ -1,0 +1,53 @@
+================================================================================
+cov-CortexDiffEditor.test.tsx
+C:\Users\DELL\Desktop\Claude IDE\cortex-ide\src\components\cortex\editor\__tests__\cov-CortexDiffEditor.test.tsx
+================================================================================
+   1: import { describe, it, expect, vi } from "vitest";
+   2: import { render } from "@solidjs/testing-library";
+   3: 
+   4: vi.mock("@/utils/tauri-api", () => ({ invoke: vi.fn().mockResolvedValue(undefined), listen: vi.fn().mockResolvedValue(vi.fn()), emit: vi.fn(), tauriInvoke: vi.fn().mockResolvedValue(undefined) }));
+   5: vi.mock("@/utils/workspace", () => ({ getWorkspacePath: vi.fn(() => "/test"), isWorkspaceOpen: vi.fn(() => true), getRelativePath: vi.fn((p: string) => p), joinPath: vi.fn((...args: string[]) => args.join("/")), normalizePath: vi.fn((p: string) => p) }));
+   6: vi.mock("@/utils/logger", () => ({ logger: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn(), trace: vi.fn() }, createLogger: vi.fn(() => ({ info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn(), trace: vi.fn() })), default: { info: vi.fn(), warn: vi.fn(), error: vi.fn(), debug: vi.fn(), trace: vi.fn() } }));
+   7: 
+   8: import { CortexDiffEditor } from "../../../cortex/editor/CortexDiffEditor";
+   9: 
+  10: describe("CortexDiffEditor", () => {
+  11:   it("CortexDiffEditor", () => {
+  12:     try { render(() => <CortexDiffEditor />); } catch (_e) { /* expected */ }
+  13:     expect(CortexDiffEditor).toBeDefined();
+  14:   });
+
+================================================================================
+workspace.ts
+C:\Users\DELL\Desktop\Claude IDE\cortex-ide\src\utils\workspace.ts
+================================================================================
+  14: /**
+  15:  * Get the current project path from localStorage.
+  16:  * Checks both "projectPath" and "cortex_current_project" keys for compatibility.
+  17:  * 
+  18:  * @returns The current project path, or empty string if not set
+  19:  */
+  20: export function getProjectPath(): string {
+  21:   return (
+  22:     safeGetItem(PROJECT_PATH_KEY) ||
+  23:     safeGetItem(cortex_PROJECT_KEY) ||
+  24:     ""
+  25:   );
+  26: }
+
+================================================================================
+SDKContext.tsx
+C:\Users\DELL\Desktop\Claude IDE\cortex-ide\src\context\SDKContext.tsx
+================================================================================
+ 133: const getInitialCwd = (): string => {
+ 134:   if (typeof window !== "undefined") {
+ 135:     const params = new URLSearchParams(window.location.search);
+ 136:     const urlProject = params.get("project");
+ 137:     if (urlProject) return urlProject;
+ 138: 
+ 139:     const label = getWindowLabel();
+ 140:     return localStorage.getItem(`cortex_current_project_${label}`) ||
+ 141:            getProjectPath() || 
+ 142:            ".";
+ 143:   }
+
